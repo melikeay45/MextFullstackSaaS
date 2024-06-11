@@ -69,7 +69,7 @@ public class ResendEmailManager:IEmailService
     {
         var message = new EmailMessage();
 
-        message.From = "noreply@yazilim.academy";
+        message.From = "support@resend.dev";
 
         foreach (var emailAddress in emailSendDto.Addresses)
             message.To.Add(emailAddress);

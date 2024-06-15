@@ -1,11 +1,10 @@
 ﻿@page "/login"
-@using System.ComponentModel.DataAnnotations;
+@using System.Net
 @using Blazored.LocalStorage
 @using MextFullstackSaaS.Application.Common.Models
 @using MextFullstackSaaS.Application.Features.UserAuth.Commands.Login
 @using MextFullstackSaas.WasmClient.Services
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Net
 @inject HttpClient HttpClient
 @inject IToasterService ToasterService
 @inject ILocalStorageService LocalStorage
@@ -13,6 +12,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 
 
+@* Login page container with gradient background *@
 <section class="from-[#FC354C] to-[#0072ff] min-h-screen bg-gradient-to-r py-10 sm:py-16 lg:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <!-- Login page content -->
@@ -29,7 +29,7 @@
                     <EditForm Model="@command" OnSubmit="HandleSubmit" FormName="loginform">
                         <DataAnnotationsValidator />
                         <ValidationSummary class="mb-1 text-red-500" />
-                        <ErrorList Errors="errors"/>
+                        <ErrorList Errors="errors" />
                         <div class="space-y-5">
                             <!-- Email input -->
                             <div>
@@ -105,13 +105,14 @@
         </div>
     </div>
 </section>
+
 @code
 {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
 
     // Login model to bind form data
-    private UserAuthLoginCommand command = new UserAuthLoginCommand();
+    private UserAuthLoginCommand command = new();
     private bool isLoading = false;
     private List<ErrorDto> errors = new();
 
@@ -119,7 +120,6 @@
     {
         var authState = await authenticationStateTask;
 
-        //Giriş yapmış kullanıcının login sayfasına ulaşması engellenir.
         if (authState.User.Identity.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/");
@@ -133,20 +133,19 @@
         {
             isLoading = true;
 
-            var response = await HttpClient.PostAsJsonAsync("UsersAuth/Login", command);
+            var response = await HttpClient.PostAsJsonAsync("UsersAuth/login", command);
 
             if (response.IsSuccessStatusCode)
             {
                 var responseDto = await response.Content.ReadFromJsonAsync<ResponseDto<JwtDto>>();
 
-                await LocalStorage.SetItemAsync <JwtDto>("cto", responseDto.Data);
+                await LocalStorage.SetItemAsync<JwtDto>("cto", responseDto.Data);
 
                 await AuthStateProvider.GetAuthenticationStateAsync();
 
                 ToasterService.ShowSuccess(responseDto.Message);
 
                 NavigationManager.NavigateTo("/");
-
             }
             else
             {
@@ -157,9 +156,13 @@
                     errors = responseDto.Errors;
 
                     ToasterService.ShowWarning(responseDto.Message);
-
                 }
-                ToasterService.ShowError($"Beklenmedik bir hata oluştu. Response Code:{response.StatusCode}");
+                else
+                {
+                    ToasterService.ShowError($"Beklenmedik bir hata olustu. Response Code:{response.StatusCode}");
+                }
+
+
             }
 
         }
@@ -190,17 +193,5 @@
     private async Task HandleCreateAccount()
     {
         // Implement create account logic here
-    }
-
-    // Login model class
-    internal class LoginModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [MinLength(6)]
-        public string Password { get; set; }
     }
 }

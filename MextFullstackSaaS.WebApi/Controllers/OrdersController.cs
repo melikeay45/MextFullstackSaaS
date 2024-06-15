@@ -41,7 +41,6 @@ namespace MextFullstackSaaS.WebApi.Controllers
             return Ok(await _mediatr.Send(command, cancellationToken));
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
         {

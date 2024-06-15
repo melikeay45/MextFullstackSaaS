@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MextFullstackSaaS.Infrastructure.Services
 {
-    public class JwtManager:IJwtService
+    public class JwtManager : IJwtService
     {
         private readonly JwtSettings _jwtSettings;
         private readonly UserManager<User> _userManager;
@@ -40,6 +40,8 @@ namespace MextFullstackSaaS.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.Aud,_jwtSettings.Audience),
                 new Claim(JwtRegisteredClaimNames.Iat,DateTime.Now.ToFileTimeUtc().ToString()),
                 new Claim(JwtRegisteredClaimNames.Exp,expirationTime.ToFileTimeUtc().ToString()),
+                new Claim("roles","CTO")
+
             };
 
             // We've created the security key using the secret key from the appsettings.json file

@@ -1,9 +1,9 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Net.Http.Headers;
+using System.Security.Claims;
+using Blazored.LocalStorage;
 using MextFullstackSaaS.Application.Common.Helpers;
 using MextFullstackSaaS.Application.Common.Models;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace MextFullstackSaas.WasmClient
 {
@@ -45,7 +45,11 @@ namespace MextFullstackSaas.WasmClient
 
             var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-            return new AuthenticationState(anonymous);
+            var anonymousState = new AuthenticationState(anonymous);
+
+            NotifyAuthenticationStateChanged(Task.FromResult(anonymousState));
+
+            return anonymousState;
         }
     }
 }

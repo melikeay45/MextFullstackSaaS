@@ -16,7 +16,7 @@ namespace MextFullstackSaaS.Application
             services.AddMediatR(cfg => {
 
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-             
+
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             });
 

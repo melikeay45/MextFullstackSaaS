@@ -3,6 +3,8 @@ using System.Security.Claims;
 
 namespace MextFullstackSaaS.Application.Common.Helpers
 {
+
+    //Burda tokendaki claimleri okur.
     public static class JwtHelper
     {
         public static IEnumerable<Claim> ReadClaimsFromToken(string accessToken)

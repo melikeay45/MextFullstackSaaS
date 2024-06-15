@@ -1,6 +1,5 @@
 ﻿@using MextFullstackSaaS.Application.Common.Models
 
-
 <div class="container mx-auto mb-4 mt-4">
     @if (Errors != null && Errors.Count > 0)
     {
@@ -27,4 +26,3 @@
     [Parameter]
     public List<ErrorDto> Errors { get; set; } = new List<ErrorDto>();
 }
-

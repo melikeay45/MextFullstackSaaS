@@ -15,7 +15,7 @@ public class UsersAuthController(ISender mediatr) : ControllerBase
     { 
         return Ok(await mediatr.Send(command, cancellationToken));
     }
-    
+
     [HttpPost("login")]
     public async Task<IActionResult>LoginAsync(UserAuthLoginCommand command, CancellationToken cancellationToken)
     { 

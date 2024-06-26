@@ -1,13 +1,11 @@
 using MextFullstackSaaS.Application;
 using MextFullstackSaaS.Application.Common.Interfaces;
-using MextFullstackSaaS.Domain.Settings;
 using MextFullstackSaaS.Infrastructure;
 using MextFullstackSaaS.WebApi;
 using MextFullstackSaaS.WebApi.Filters;
+using MextFullstackSaaS.WebApi.Hubs;
 using MextFullstackSaaS.WebApi.Services;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Serilog;
 
@@ -68,6 +66,8 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    app.MapHub<OrderHub>("/hubs/orderHub");
 
     app.Run();
 

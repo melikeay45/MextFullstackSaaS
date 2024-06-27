@@ -17,6 +17,8 @@ public class UserAuthValidatorBase<T>:AbstractValidator<T> where T:class
 
     protected bool IsEmail(string email)
     {
+        if(string.IsNullOrEmpty(email)) return false;
+
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         
         return Regex.IsMatch(email, emailPattern, RegexOptions.IgnoreCase);

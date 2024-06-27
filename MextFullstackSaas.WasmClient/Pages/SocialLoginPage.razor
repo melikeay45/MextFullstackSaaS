@@ -1,0 +1,19 @@
+﻿@page "/social-login"
+
+<h3 class="my-auto">Email:@Email</h3>
+<h3 class="my-auto">firts name:@FirstName</h3>
+<h3 class="my-auto">last name:@LastName</h3>
+
+@code {
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string Email { get; set; }
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string FirstName { get; set; }
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string LastName { get; set; }
+}

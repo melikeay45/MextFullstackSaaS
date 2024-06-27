@@ -11,7 +11,7 @@ using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("C:\\Users\\alper\\Desktop\\log.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("C:\\Users\\Melike Aydýn\\Desktop\\Melike\\log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 try

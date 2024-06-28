@@ -8,6 +8,7 @@ using MextFullstackSaaS.Application.Features.UserAuth.Commands.VerifyEmail;
 using MextFullstackSaaS.Domain.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using MextFullstackSaaS.Application.Features.UserAuth.Commands.SocialLogin;
 
 namespace MextFullstackSaaS.WebApi.Controllers;
 
@@ -23,7 +24,7 @@ public class UsersAuthController : ControllerBase
     public UsersAuthController(IOptions<GoogleSettings> googleSettings, ISender mediatr)
     {
         _googleSettings = googleSettings.Value;
-        _mediatr=mediatr;
+        _mediatr = mediatr;
         _googleAuthorizationUrl = $"https://accounts.google.com/o/oauth2/v2/auth?" +
                                      $"client_id={_googleSettings.ClientId}&" +
                                      $"response_type=code&" +
@@ -56,42 +57,40 @@ public class UsersAuthController : ControllerBase
 
         var payload = await GoogleJsonWebSignature.ValidateAsync(tokenResponse.IdToken);
 
-        var email = payload.Email;
-        var firstName = payload.GivenName;
-        var lastName = payload.FamilyName;
+        var command = new UserAuthSocialLoginCommand(payload.Email, payload.GivenName, payload.FamilyName);
 
-    //var jwtDto =
-    //    await _authenticationService.SocialLoginAsync(userEmail, firstName, lastName, cancellationToken);
+        var responseDto = await _mediatr.Send(command, cancellationToken);
 
-    //var queryParams = new Dictionary<string, string>()
-    //    {
-    //        {"access_token",jwtDto.AccessToken },
-    //        {"expiry_date",jwtDto.ExpiryDate.ToBinary().ToString() },
-    //    };
 
-    //var formContent = new FormUrlEncodedContent(queryParams);
+        var queryParams = new Dictionary<string, string>()
+    {
+        {"access_token",responseDto.Data.Token },
+         {"expiry_date", responseDto.Data.Expires.ToBinary().ToString() },
+     };
 
-    //var query = await formContent.ReadAsStringAsync(cancellationToken);
+        var formContent = new FormUrlEncodedContent(queryParams);
 
-    //var redirectUrl = $"http://127.0.0.1:5173/social-login?{query}";
-        return Redirect($"http://localhost:5002/social-login?email={email}&firstName={firstName}&lastName={lastName}");
+        var query = await formContent.ReadAsStringAsync(cancellationToken);
+
+        var redirectUrl = $"http://localhost:5002/social-login?{query}";
+        return Redirect(redirectUrl);
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync(UserAuthRegisterCommand command, CancellationToken cancellationToken)
-    { 
+    {
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult>LoginAsync(UserAuthLoginCommand command, CancellationToken cancellationToken)
-    { 
+    public async Task<IActionResult> LoginAsync(UserAuthLoginCommand command, CancellationToken cancellationToken)
+    {
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
-    
+
     [HttpGet("verify-email")]
-    public async Task<IActionResult>VerifyEmailAsync([FromQuery] UserAuthVerifyEmailCommand command, CancellationToken cancellationToken)
-    { 
+    public async Task<IActionResult> VerifyEmailAsync([FromQuery] UserAuthVerifyEmailCommand command, CancellationToken cancellationToken)
+    {
         return Ok(await _mediatr.Send(command, cancellationToken));
     }
 }
